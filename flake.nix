@@ -30,7 +30,7 @@
 
             sourceRoot = "./source";
 
-            dontPatchELF = true;
+            dontFixup = true;
 
             installPhase = let
               path = {
