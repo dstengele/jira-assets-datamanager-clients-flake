@@ -19,13 +19,15 @@
         in rec {
           default = pkgs.stdenv.mkDerivation rec {
             name = "jsm-assets-dm-clients-${version}";
-            version = "1000080";
+            version = "102050000";
+
+            buildInputs = with pkgs; [ icu77 makeWrapper ]; # This SHOULD work, but doesn't. The app still can't find the icu lib.
 
             src = pkgs.fetchzip {
               url = "https://marketplace.atlassian.com/download/apps/1234690/version/${version}";
               extension = "zip";
               stripRoot = false;
-              sha256 = "sha256-rwh+iTiMX9/47WZggprDJbNhkfHtqcsnHpPlNc4hLSY=";
+              sha256 = "sha256-e0M1HGhMaIhWI/Rw7YQqo8QjIGHgv0V51Iu0KJfB9JE=";
             };
 
             sourceRoot = "./source";
@@ -44,6 +46,11 @@
               install -m755 -D ${path}/assets-adapters-client/dm-adapters $out/bin/dm-adapters
               install -m755 -D ${path}/assets-cleanse-and-import-client/dm-cleanseimport $out/bin/dm-cleanseimport
               runHook postInstall
+            '';
+
+            postInstall = ''
+              wrapProgram $out/bin/dm-adapters      --set DOTNET_SYSTEM_GLOBALIZATION_INVARIANT 1
+              wrapProgram $out/bin/dm-cleanseimport --set DOTNET_SYSTEM_GLOBALIZATION_INVARIANT 1
             '';
 
             meta = with pkgs.lib; {
